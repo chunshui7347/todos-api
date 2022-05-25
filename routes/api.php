@@ -21,3 +21,13 @@ Route::get('auth/github/callback', [GitHubController::class, 'gitCallback']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/tasks', 'TaskController@getAll');
+
+Route::post('/task', 'TaskController@create');
+
+Route::delete('/task/{task}', 'TaskController@delete');
+
+Route::match(['put', 'patch'], '/task/{task}', 'TaskController@update');
+
+Route::match(['put', 'patch'], '/task/{task}/completed', 'TaskController@completed');

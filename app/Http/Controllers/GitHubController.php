@@ -21,11 +21,10 @@ class GitHubController extends Controller
 
             $user = Socialite::driver('github')->user();
             $searchUser = User::where('github_id', $user->id)->first();
+            // dd($searchUser);
             if ($searchUser) {
-
-                Auth::login($searchUser);
-
-                return redirect('/');
+                $token = $searchUser->createToken('API Token')->accessToken;
+                return response(['user' => $searchUser, 'token' => $token]);
             } else {
                 $gitUser = User::create([
                     'name' => $user->name,
@@ -34,11 +33,8 @@ class GitHubController extends Controller
                     'auth_type' => 'github',
                     'password' => encrypt('gitpwd059')
                 ]);
-
-
-                Auth::login($gitUser);
-
-                return redirect('/');
+                $token = $gitUser->createToken('API Token')->accessToken;
+                return response(['user' => $gitUser, 'token' => $token]);
             }
         } catch (Exception $e) {
         }
