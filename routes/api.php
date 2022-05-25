@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GitHubController;
+use App\Http\Controllers\TodoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,12 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/tasks', 'TaskController@getAll');
 
-Route::post('/task', 'TaskController@create');
+Route::middleware('auth:api')->group(function () {
+    Route::get('/tasks', [TodoController::class, 'index']);
 
-Route::delete('/task/{task}', 'TaskController@delete');
+    Route::post('/task', [TodoController::class, 'create']);
 
-Route::match(['put', 'patch'], '/task/{task}', 'TaskController@update');
+    Route::delete('/task/{task}', [TodoController::class, 'delete']);
 
-Route::match(['put', 'patch'], '/task/{task}/completed', 'TaskController@completed');
+    Route::post('/task/update', [TodoController::class, 'update']);
+
+    Route::match(['put', 'patch'], '/task/{task}/completed', [TodoController::class, 'completed']);
+});
